@@ -1,0 +1,160 @@
+* {
+    margin: 0;
+    font-family: 'Rubik', sans-serif;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; /* Минимальная высота на всю высоту окна */
+    display: flex;
+    flex-direction: column; /* Flexbox для всей страницы */
+}
+
+body {
+    background-color: #4158D0;
+    background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+}
+
+nav {
+    background-color: rgba(0,0,0,0.1);
+    padding: 10px; /* Отступы внутри навигации */
+    margin: 0; /* Убираем отступы вокруг навигации */
+    display: flex; /* Используем Flexbox */
+    justify-content: center; /* Центрируем по горизонтали */
+}
+
+nav ul {
+    list-style-type: none; /* Убираем маркеры */
+    padding: 0; /* Убираем отступы внутри списка */
+    margin: 0; /* Убираем отступы вокруг списка */
+    display: flex; /* Используем Flexbox для списка */
+}
+
+nav ul li {
+    margin: 0 20px; /* Отступ между пунктами */
+    position: relative; /* Для абсолютного позиционирования фона и рамки */
+}
+
+nav a {
+    color: #fff; /* Цвет текста */
+    text-decoration: none; /* Убираем подчеркивание */
+    font-size: 18px;
+    font-weight: 300; /* Устанавливаем толщину шрифта на 300 */
+    text-transform: uppercase; /* Заглавные буквы */
+    padding: 5px 10px; /* Отступы внутри ссылок */
+    position: relative; /* Для псевдоэлементов */
+}
+
+
+nav a:hover {
+    background: #fff;
+    color: #5d5d5d;
+    border-radius: 10px;
+    box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+
+}
+
+nav a[data-active="true"] {
+    background: #fff;
+    color: #5d5d5d;
+    border-radius: 10px;
+    box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start; /* Выравнивание по верхней части */
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 5%; /* Сдвигаем контейнер ниже */
+}
+  
+#message {
+    min-height: 20px;
+    visibility: hidden;
+    font-size: 20px;
+}
+
+form {
+    background-color: rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: 5em;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    padding: 5rem;
+    box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.2);
+}
+  
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+input[type="text"] {
+    color: white;
+    width: 250px;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: solid 1px rgba(255,255,255,0);
+}
+
+input[type="text"]:focus {
+    border: solid 1px rgba(255,255,255,0.8);
+    outline: none;
+    caret-color: white;
+}
+
+input[type="text"]::placeholder {
+    color: #ffffff;
+    font-weight: 100;
+    opacity: 80%;
+}
+
+input[type="text"]::selection {
+    background-color: #8c0d7b; /* Цвет фона выделения */
+    color: #ffffff; /* Цвет текста при выделении */
+}
+
+button {
+    margin-top: 30px;
+    width: fit-content;
+    min-width: 100px;
+    height: 45px;
+    padding: 8px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: white;
+    transition: all 0.2s ease-in-out 0ms;
+    user-select: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+  }
+  
+  button:hover {
+    background-color: #F2F2F2;
+  }
+  
+  button:active {
+    transform: scale(0.95);
+  }
+
+  .footer {
+    background-color: #333; /* Темный фон */
+    color: #fff; /* Белый текст */
+    text-align: center;
+    padding: 15px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
