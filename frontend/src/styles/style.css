@@ -154,7 +154,7 @@ button {
     color: #fff; /* Белый текст */
     text-align: center;
     padding: 15px 0;
-    position: relative;
+    position: fixed;
     bottom: 0;
     width: 100%;
 }

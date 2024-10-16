@@ -11,4 +11,4 @@ export const sendWords = async (rusWord, engWord) => {
         throw error; // Пробрасываем ошибку для обработки в app.js
     }
 };
-const API_URL = 'http://37.252.5.123:8000/words';
+
