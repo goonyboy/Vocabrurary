@@ -1,7 +1,4 @@
-
 import { sendWords } from './api.js'; // Импортируем функцию
-
-
 
 document.addEventListener('DOMContentLoaded', () => {
     // Пример добавления обработчика событий для инпутов
