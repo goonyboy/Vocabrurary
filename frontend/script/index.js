@@ -1,30 +1,14 @@
-import { sendWords } from './api.js'; // Импортируем функцию
+import { sendWords } from './api.js'; // Импортируем функцию для отправки слов на сервер в БД
+import { validateInput } from './utils.js'; // Импортируем функцию для валидации инпутов
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Пример добавления обработчика событий для инпутов
-    const inputs = document.querySelectorAll('input[data-lang]');
-    const validateInput = (event) => {
-        let input = event.target.value;
-        const language = event.target.getAttribute('data-lang'); // Получаем язык из атрибута data-lang
-        input = input.toLowerCase();
-        // Проверяем, какое поле (английское или русское)
-        if (language === 'en') {
-            // Разрешаем только английские буквы и одиночные пробелы
-            input = input.replace(/[^a-z\s]/g, '');
-        } else if (language === 'ru') {
-            // Разрешаем только русские буквы и одиночные пробелы
-            input = input.replace(/[^а-я\s]/g, '');
-        }
-        // Запрещаем два пробела подряд
-        input = input.replace(/\s{2,}/g, ' ');
-        // Обновляем значение input
-        event.target.value = input;
-    };
 
+    // Обработчик события для инпутов
+    const inputs = document.querySelectorAll('input[data-lang]');
     inputs.forEach(input => {
         input.addEventListener('input', validateInput); // Используем функцию
     });
-    
+
     const sendButton = document.getElementById('send-button');
     const englishWordInput = document.getElementById('english-word');
     const russianWordInput = document.getElementById('russian-word');
@@ -64,13 +48,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             showMessage('Заполните оба поля', 'orange'); // Поля не заполнены
         }
-        
+
     });
 
 });
 
 import { setNavLinkActiveState } from './utils.js'
-
+//Делаем вкладку "активной"
 document.querySelectorAll('nav a').forEach(link => {
     setNavLinkActiveState([link]);  // Передаем массив с одной ссылкой
 });
