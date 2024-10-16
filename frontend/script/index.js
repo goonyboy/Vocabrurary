@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             showMessage('Заполните оба поля', 'orange'); // Поля не заполнены
         }
+        
     });
 
 });
