@@ -1,4 +1,5 @@
 // api.js
+
 export const sendWords = async (rusWord, engWord) => {
     try {
         const response = await axios.post('http://37.252.5.123:8000/words', {
