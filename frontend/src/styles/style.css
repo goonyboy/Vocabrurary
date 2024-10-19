@@ -14,6 +14,7 @@ html, body {
 body {
     background-color: #4158D0;
     background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+    background-attachment: fixed;
 }
 
 nav {
@@ -62,6 +63,54 @@ nav a[data-active="true"] {
     box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
 }
 
+/* Стили для основного контента */
+.main-content {
+    padding: 20px;
+}
+
+/* Стили для списка слов */
+#words-list {
+    margin: 20px auto;
+    max-width: 500px;
+}
+
+.word-item {
+    display: flex; /* Используем Flexbox для выравнивания */
+    justify-content: space-between; /* Равномерно распределяем элементы по ширине */
+    align-items: center; /* Вертикально выравниваем элементы */
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin: 10px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.word-item p {
+    margin: 0; /* Убираем отступы для параграфа, чтобы избежать растяжения */
+    flex-grow: 1; /* Позволяет тексту занимать оставшееся пространство */
+}
+
+.delete-button {
+    padding: 5px 10px;
+    color: #fff;
+    background-image: linear-gradient(
+        to right,
+        #2b5876 0%,
+        #4e4376 51%,
+        #2b5876 100%
+      );
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 40px; /* Установка высоты для кнопки */
+}
+
+.delete-button:hover {
+    scale: 1.05;
+    transition: 0.2s;
+}
+
 .container {
     flex: 1;
     display: flex;
@@ -79,7 +128,7 @@ nav a[data-active="true"] {
 }
 
 form {
-    background-color: rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, 0.3);
     display: flex;
     flex-direction: column;
     height: 5em;
@@ -87,7 +136,7 @@ form {
     justify-content: center;
     border-radius: 30px;
     padding: 5rem;
-    box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
   
 .input-group {
@@ -124,28 +173,35 @@ input[type="text"]::selection {
     color: #ffffff; /* Цвет текста при выделении */
 }
 
-button {
+#wordForm button {
     margin-top: 30px;
-    width: fit-content;
-    min-width: 100px;
-    height: 45px;
+    min-width: 150px;
+    height: 80px;
     padding: 8px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    background-color: white;
-    transition: all 0.2s ease-in-out 0ms;
+    color: #fff;
+    background-image: linear-gradient(
+        to right,
+        #2b5876 0%,
+        #4e4376 51%,
+        #2b5876 100%
+      );
+    border-radius: 10px;
+    transition: 0.5s;
     user-select: none;
-    font-family: 'Poppins', sans-serif;
-    font-size: 16px;
-    text-transform: uppercase;
+    font-size: 17px;
   }
   
-  button:hover {
-    background-color: #F2F2F2;
+  #wordForm button:hover {
+    background-position: right center; /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
   }
   
-  button:active {
+  #wordForm button:active {
     transform: scale(0.95);
   }
 
