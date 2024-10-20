@@ -63,14 +63,22 @@ nav a[data-active="true"] {
     box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
 }
 
+.search-container {
+    margin-top: 1rem;
+    justify-content: center; 
+    display: flex;
+    align-items: center;
+}
+
 /* Стили для основного контента */
 .main-content {
     padding: 20px;
+    margin-bottom: 3rem;
 }
 
 /* Стили для списка слов */
 #words-list {
-    margin: 20px auto;
+    margin: 0 auto;
     max-width: 500px;
 }
 
