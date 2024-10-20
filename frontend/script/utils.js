@@ -25,3 +25,27 @@ export const validateInput = (event) => {
     // Обновляем значение input
     event.target.value = input;
 };
+
+export function renderWords(words, container, onDelete) {
+    words.forEach(wordObj => {
+        const wordElement = document.createElement('div');
+        wordElement.classList.add('word-item');
+
+        wordElement.innerHTML = `
+            <p><strong>${wordObj.eng_word}</strong>: ${wordObj.rus_word}</p>
+        `;
+
+        // Создание кнопки удаления
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Удалить';
+        deleteButton.classList.add('delete-button');
+
+        // Обработчик клика по кнопке удаления
+        deleteButton.addEventListener('click', () => {
+            onDelete(wordObj.id); // Вызываем функцию удаления при нажатии
+        });
+
+        wordElement.appendChild(deleteButton); // Добавляем кнопку в блок со словом
+        container.appendChild(wordElement);
+    });
+}

@@ -1,10 +1,10 @@
 // api.js
 
-export const sendWords = async (rusWord, engWord) => {
+export const sendWords = async (rus_word, eng_word) => {
     try {
         const response = await axios.post('http://37.252.5.123:8000/words', {
-            rus_word: rusWord,
-            eng_word: engWord
+            rus_word: rus_word,
+            eng_word: eng_word
         });
         return response.data; // Возвращаем данные ответа
     } catch (error) {
@@ -13,3 +13,15 @@ export const sendWords = async (rusWord, engWord) => {
     }
 };
 
+
+const BASE_URL = 'http://37.252.5.123:8000/words';
+
+// Функция для получения слов
+export function getWords(page) {
+    return axios.get(`${BASE_URL}?page=${page}`);
+}
+
+// Функция для удаления слова
+export function deleteWordFromServer(wordId) {
+    return axios.delete(`${BASE_URL}/${wordId}`);
+}
