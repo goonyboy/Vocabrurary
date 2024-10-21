@@ -16,8 +16,8 @@ const searchInput = document.getElementById("search-input");
 
 // Функция для загрузки слов с сервера
 function loadMoreWords() {
-    if (loading) return;
-    loading = true;
+    if (loading) return; // Предотвращает повторную загрузку
+    loading = true; // Устанавливаем флаг загрузки
 
     getWords(currentPage)
         .then(response => {
@@ -31,17 +31,22 @@ function loadMoreWords() {
             if (filteredNewWords.length > 0) {
                 allLoadedWords = [...allLoadedWords, ...filteredNewWords];
 
-                // Сортируем и отображаем
+                // Очищаем и перерисовываем список слов
+                wordsList.innerHTML = '';
                 sortWords();
                 renderWords(allLoadedWords, wordsList, deleteWord);
+
+                currentPage++; // Увеличиваем номер страницы для следующего запроса
+            } else {
+                // Больше нет слов для подгрузки
+                window.removeEventListener('scroll', loadMoreWords); // Отключаем скролл
             }
 
-            currentPage++;
-            loading = false;
+            loading = false; // Сбрасываем флаг после завершения
         })
         .catch(error => {
             console.error('Error fetching words:', error);
-            loading = false;
+            loading = false; // Сбрасываем флаг даже при ошибке
         });
 }
 
@@ -54,9 +59,16 @@ function sortWords() {
 function deleteWord(wordId) {
     deleteWordFromServer(wordId)
         .then(() => {
+            // Удаляем слово из массива
             allLoadedWords = allLoadedWords.filter(word => word.id !== wordId);
+            
+            // Очищаем контейнер перед рендерингом
+            wordsList.innerHTML = '';
+            
+            // Сортируем и рендерим обновленный список
             sortWords();
             renderWords(allLoadedWords, wordsList, deleteWord);
+            
         })
         .catch(error => {
             console.error('Error deleting word:', error);
@@ -85,11 +97,19 @@ searchInput.addEventListener('input', (e) => {
     filterWords(query);
 });
 
-// Отслеживание прокрутки для подгрузки новых слов
+// Добавляем обработчик скролла
+let scrollTimeout; // Переменная для хранения таймера
+
 window.addEventListener('scroll', () => {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200 && !loading) {
-        loadMoreWords();
+    if (scrollTimeout) {
+        clearTimeout(scrollTimeout); // Очищаем предыдущий таймер
     }
+
+    scrollTimeout = setTimeout(() => {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && !loading) {
+            loadMoreWords();
+        }
+    }, 100); // Задержка в 100 миллисекунд
 });
 
 // Начальная загрузка слов
