@@ -3,123 +3,115 @@ import { getWords, deleteWordFromServer } from './api.js';
 import { renderWords } from './utils.js';
 
 document.querySelectorAll('nav a').forEach(link => {
-    setNavLinkActiveState([link]);  // Передаем массив с одной ссылкой
+    setNavLinkActiveState([link]);
 });
+
+let currentPage = 1;
+const wordsPerPage = 10;
+let loading = false;
+let allLoadedWords = [];
+let filteredWords = []; // Слова, соответствующие поисковому запросу
+let totalWords = 0;
+let totalPages = 1;
 
 const wordsList = document.getElementById("words-list");
 const searchInput = document.getElementById("search-input");
 const paginationContainer = document.getElementById("pagination");
 
-let allWords = [];   // Массив для хранения всех слов из базы данных
-let totalPages = 1;  // Общее количество страниц
-let currentPage = 1; // Номер текущей страницы
-const wordsPerPage = 1; // Количество слов на странице
+// Функция загрузки слов с сервера
+function loadWords(page = 1) {
+    if (loading) return;
+    loading = true;
 
-// Функция для загрузки всех слов с сервера и расчета пагинации
-function loadAllWords() {
-    getWords(currentPage || 1) // Проверяем значение currentPage, чтобы оно всегда было определено
+    getWords(page)
         .then(response => {
-            allWords = response.data.items;
-            totalPages = Math.ceil(response.data.total / wordsPerPage); // Вычисляем общее количество страниц
-            renderPage(currentPage); // Рендерим первую страницу
-            renderPagination(); // Рендерим кнопки пагинации
+            const { items, total } = response.data;
+
+            totalWords = total;
+            totalPages = Math.ceil(totalWords / wordsPerPage);
+            allLoadedWords = items;
+            filteredWords = allLoadedWords;
+
+            renderPage(currentPage);
+            createPagination();
+            loading = false;
         })
         .catch(error => {
             console.error('Error fetching words:', error);
+            loading = false;
         });
 }
 
-// Функция для отображения слов на текущей странице
+// Функция отображения определенной страницы
 function renderPage(page) {
     const start = (page - 1) * wordsPerPage;
-    const end = start + wordsPerPage;
-    const wordsToShow = allWords.slice(start, end); // Берем слова для текущей страницы
-    wordsList.innerHTML = ''; // Очищаем список перед рендером
-    renderWords(wordsToShow, wordsList, deleteWord); // Отображаем слова
+    const wordsToDisplay = filteredWords.slice(start, start + wordsPerPage);
+
+    wordsList.innerHTML = '';
+    renderWords(wordsToDisplay, wordsList, deleteWord);
 }
 
-// Функция для рендеринга кнопок пагинации
-function renderPagination() {
-    paginationContainer.innerHTML = ''; // Очищаем контейнер пагинации
+// Функция создания пагинации
+function createPagination() {
+    paginationContainer.innerHTML = '';
 
-    const addPageButton = (page, text = page) => {
-        const pageButton = document.createElement("button");
-        pageButton.textContent = text;
-        pageButton.classList.add("pagination-button");
-        
-        if (page === currentPage) {
-            pageButton.classList.add("active");
-        }
+    const createButton = (page, label = page) => {
+        const button = document.createElement('button');
+        button.className = 'pagination-button';
+        button.textContent = label;
+        if (page === currentPage) button.classList.add('active');
 
-        pageButton.addEventListener("click", () => {
+        button.addEventListener('click', () => {
             currentPage = page;
-            renderPage(currentPage); // Обновляем список слов для выбранной страницы
-            renderPagination(); // Обновляем кнопки пагинации
+            renderPage(currentPage);
+            createPagination();
         });
 
-        paginationContainer.appendChild(pageButton);
+        paginationContainer.appendChild(button);
     };
 
-    // Всегда показываем первую страницу
-    addPageButton(1);
-
-    // Добавляем многоточие, если между первой страницей и текущей есть промежуток
-    if (currentPage > 3) {
-        paginationContainer.appendChild(document.createTextNode('...'));
-    }
-
-    // Отображаем номера страниц вокруг текущей
-    const startPage = Math.max(2, currentPage - 1);
-    const endPage = Math.min(totalPages - 1, currentPage + 1);
-
-    for (let i = startPage; i <= endPage; i++) {
-        addPageButton(i);
-    }
-
-    // Добавляем многоточие, если между текущей страницей и последней есть промежуток
-    if (currentPage < totalPages - 2) {
-        paginationContainer.appendChild(document.createTextNode('...'));
-    }
-
-    // Всегда показываем последнюю страницу
-    if (totalPages > 1) {
-        addPageButton(totalPages);
-    }
-}
-
-// Функция для обновления активного состояния кнопок пагинации
-function updatePagination() {
-    Array.from(paginationContainer.children).forEach((button, index) => {
-        button.classList.toggle("active", index + 1 === currentPage);
-    });
-}
-
-// Функция удаления слова
-function deleteWord(wordId) {
-    deleteWordFromServer(wordId).then(() => {
-        allWords = allWords.filter(word => word.id !== wordId); // Удаляем слово из массива
-        totalPages = Math.ceil(allWords.length / wordsPerPage); // Обновляем общее количество страниц
-        if (currentPage > totalPages) {
-            currentPage = totalPages; // Переходим на последнюю страницу, если текущая пустая
+    if (totalPages <= 5) {
+        for (let i = 1; i <= totalPages; i++) {
+            createButton(i);
         }
-        renderPage(currentPage); // Обновляем слова для текущей страницы
-        renderPagination(); // Пересоздаем кнопки пагинации
-    }).catch(error => {
-        console.error('Error deleting word:', error);
-        alert('Не удалось удалить слово.');
-    });
+    } else {
+        createButton(1);
+        if (currentPage > 3) paginationContainer.appendChild(document.createTextNode('...'));
+
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+            createButton(i);
+        }
+
+        if (currentPage < totalPages - 2) paginationContainer.appendChild(document.createTextNode('...'));
+        createButton(totalPages);
+    }
 }
 
-// Функция для фильтрации слов по поисковому запросу
+// Функция фильтрации слов
 function filterWords(query) {
+    currentPage = 1;
     query = query.toLowerCase();
-    const filteredWords = allWords.filter(word => 
+    filteredWords = allLoadedWords.filter(word =>
         word.eng_word.toLowerCase().includes(query) || 
         word.rus_word.toLowerCase().includes(query)
     );
 
-    wordsList.innerHTML = '';
-    renderWords(filteredWords, wordsList, deleteWord);
+    totalPages = Math.ceil(filteredWords.length / wordsPerPage);
+    renderPage(currentPage);
+    createPagination();
+}
+
+// Функция удаления слова
+function deleteWord(wordId) {
+    deleteWordFromServer(wordId)
+        .then(() => {
+            allLoadedWords = allLoadedWords.filter(word => word.id !== wordId);
+            filterWords(searchInput.value); // Перезагрузка с учетом фильтрации
+        })
+        .catch(error => {
+            console.error('Error deleting word:', error);
+            alert('Не удалось удалить слово.');
+        });
 }
 
 // Обработчик для поиска
@@ -128,5 +120,5 @@ searchInput.addEventListener('input', (e) => {
     filterWords(query);
 });
 
-// Начальная загрузка всех слов при загрузке страницы
-document.addEventListener("DOMContentLoaded", () => loadAllWords());
+// Начальная загрузка слов
+document.addEventListener("DOMContentLoaded", () => loadWords(currentPage));
