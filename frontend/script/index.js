@@ -1,8 +1,9 @@
+// index.js
+
 import { sendWords } from './api.js'; // Импортируем функцию для отправки слов на сервер в БД
-import { validateInput } from './utils.js'; // Импортируем функцию для валидации инпутов
+import { validateInput, setNavLinkActiveState } from './utils.js'; // Импортируем функции из utils.js
 
 document.addEventListener('DOMContentLoaded', () => {
-
     // Обработчик события для инпутов
     const inputs = document.querySelectorAll('input[data-lang]');
     inputs.forEach(input => {
@@ -35,31 +36,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (englishWord && russianWord) {
             try {
-                const response = await sendWords(russianWord, englishWord); // Вызываем функцию отправки
+                // Вызываем функцию отправки с данными
+                const response = await sendWords(russianWord, englishWord);
                 console.log('Words sent successfully:', response);
                 showMessage('Слово добавлено в словарь', 'white'); // Успех
+
                 // Очищаем поля ввода
                 englishWordInput.value = '';
                 russianWordInput.value = '';
             } catch (error) {
                 console.error('Failed to send words:', error);
-                showMessage('Слово уже есть в словаре', 'red'); // Ошибка
+                showMessage('Ошибка при добавлении слова', 'red'); // Общая ошибка
             }
         } else {
             showMessage('Заполните оба поля', 'orange'); // Поля не заполнены
         }
-
     });
 
+    // Делаем вкладку "активной"
+    document.querySelectorAll('nav a').forEach(link => {
+        setNavLinkActiveState([link]);  // Передаем массив с одной ссылкой
+    });
 });
-
-import { setNavLinkActiveState } from './utils.js'
-
-//Делаем вкладку "активной"
-document.querySelectorAll('nav a').forEach(link => {
-    setNavLinkActiveState([link]);  // Передаем массив с одной ссылкой
-});
-
-
-
-
