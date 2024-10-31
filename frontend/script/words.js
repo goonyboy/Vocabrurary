@@ -8,47 +8,46 @@ document.querySelectorAll('nav a').forEach(link => {
 
 let currentPage = 1;
 const wordsPerPage = 10;
-let loading = false;
-let allLoadedWords = [];
-let filteredWords = []; // Слова, соответствующие поисковому запросу
 let totalWords = 0;
 let totalPages = 1;
+let currentFilter = '';
 
 const wordsList = document.getElementById("words-list");
 const searchInput = document.getElementById("search-input");
 const paginationContainer = document.getElementById("pagination");
 
 // Функция загрузки слов с сервера
-function loadWords(page = 1) {
-    if (loading) return;
-    loading = true;
-
-    getWords(page)
+function loadWords(page = 1, wordFilter = '') {
+    getWords(page, wordsPerPage, wordFilter)
         .then(response => {
-            const { items, total } = response.data;
+            const { items, total, pages } = response.data;
 
             totalWords = total;
-            totalPages = Math.ceil(totalWords / wordsPerPage);
-            allLoadedWords = items;
-            filteredWords = allLoadedWords;
+            totalPages = pages;
 
-            renderPage(currentPage);
+            renderPage(items);
             createPagination();
-            loading = false;
         })
         .catch(error => {
             console.error('Error fetching words:', error);
-            loading = false;
         });
 }
 
-// Функция отображения определенной страницы
-function renderPage(page) {
-    const start = (page - 1) * wordsPerPage;
-    const wordsToDisplay = filteredWords.slice(start, start + wordsPerPage);
-
+// Функция отображения слов на текущей странице
+function renderPage(words) {
     wordsList.innerHTML = '';
-    renderWords(wordsToDisplay, wordsList, deleteWord);
+    renderWords(words, wordsList, deleteWord);
+}
+
+// Функция для удаления слова
+function deleteWord(wordId) {
+    deleteWordFromServer(wordId)
+        .then(() => {
+            loadWords(currentPage, currentFilter);
+        })
+        .catch(error => {
+            console.error('Error deleting word:', error);
+        });
 }
 
 // Функция создания пагинации
@@ -63,8 +62,7 @@ function createPagination() {
 
         button.addEventListener('click', () => {
             currentPage = page;
-            renderPage(currentPage);
-            createPagination();
+            loadWords(currentPage, currentFilter);
         });
 
         paginationContainer.appendChild(button);
@@ -87,36 +85,16 @@ function createPagination() {
     }
 }
 
-// Функция фильтрации слов
+// Функция для фильтрации слов
 function filterWords(query) {
     currentPage = 1;
-    query = query.toLowerCase();
-    filteredWords = allLoadedWords.filter(word =>
-        word.eng_word.toLowerCase().includes(query) || 
-        word.rus_word.toLowerCase().includes(query)
-    );
-
-    totalPages = Math.ceil(filteredWords.length / wordsPerPage);
-    renderPage(currentPage);
-    createPagination();
-}
-
-// Функция удаления слова
-function deleteWord(wordId) {
-    deleteWordFromServer(wordId)
-        .then(() => {
-            allLoadedWords = allLoadedWords.filter(word => word.id !== wordId);
-            filterWords(searchInput.value); // Перезагрузка с учетом фильтрации
-        })
-        .catch(error => {
-            console.error('Error deleting word:', error);
-            alert('Не удалось удалить слово.');
-        });
+    currentFilter = query;
+    loadWords(currentPage, currentFilter);
 }
 
 // Обработчик для поиска
 searchInput.addEventListener('input', (e) => {
-    const query = e.target.value;
+    const query = e.target.value.trim();
     filterWords(query);
 });
 
