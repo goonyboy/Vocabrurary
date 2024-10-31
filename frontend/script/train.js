@@ -6,56 +6,36 @@ document.querySelectorAll('nav a').forEach(link => {
     setNavLinkActiveState([link]);
 });
 
-let wordsList = []; // Массив для хранения всех слов
+
 let hasFlipped = false; // Флаг для отслеживания переворота
 
-// Функция для создания карточки
-function createCard(engWord, rusWord) {
-    const card = document.createElement('div');
-    card.classList.add('card');
-    card.innerHTML = `
-        <div class="card-front">${engWord}</div>
-        <div class="card-back">${rusWord}</div>
-    `;
-    
-    card.addEventListener('click', () => {
-        if (!hasFlipped) {
-            card.classList.toggle('flipped');
-            hasFlipped = true;
-        } else {
-            hasFlipped = false;
-            showRandomWord(); // Показываем новое слово
-        }
-    });
-    return card;
-}
+// Функция для показа случайного слова из API
+async function showRandomWord() {
+    const cardFront = document.querySelector('.card-front');
+    const cardBack = document.querySelector('.card-back');
 
-// Функция для показа случайного слова из загруженного списка
-function showRandomWord() {
-    if (wordsList.length === 0) {
-        alert('Слова не найдены.');
-        return;
-    }
-
-    const randomIndex = Math.floor(Math.random() * wordsList.length);
-    const randomWord = wordsList[randomIndex];
-
-    const cardContainer = document.getElementById('card-container');
-    cardContainer.innerHTML = ''; // Очищаем контейнер
-    const card = createCard(randomWord.eng_word, randomWord.rus_word);
-    cardContainer.appendChild(card); // Добавляем новую карточку
-}
-
-// Функция для загрузки списка слов один раз при открытии страницы
-async function loadWordsOnce() {
     try {
-        wordsList = await getRandomWords(); // Загружаем список слов
-        showRandomWord(); // Показываем первое случайное слово
+        const randomWord = await getRandomWords();
+        cardFront.textContent = randomWord.eng_word; // Устанавливаем английское слово
+        cardBack.textContent = randomWord.rus_word; // Устанавливаем русский перевод
     } catch (error) {
-        console.error('Ошибка при загрузке слов:', error);
-        alert('Не удалось загрузить слова.');
+        console.error('Ошибка при загрузке случайного слова:', error);
+        alert('Не удалось загрузить слово.');
     }
 }
 
 // Инициализация при загрузке страницы
-loadWordsOnce();
+showRandomWord(); // Показываем первое случайное слово
+
+// Обработчик клика по карточке
+const card = document.querySelector('.card');
+card.addEventListener('click', () => {
+    if (!hasFlipped) {
+        card.classList.toggle('flipped');
+        hasFlipped = true;
+    } else {
+        card.classList.toggle('flipped'); // Переворачиваем обратно
+        hasFlipped = false;
+        showRandomWord(); // Загружаем новое слово
+    }
+});
