@@ -284,17 +284,18 @@ input[type="text"]::selection {
 }
 
 
-/* Центрирование контейнера карточки */
 .card-container {
     display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
     justify-content: center;
-    align-items: center;
-    min-height: 80vh;
+    padding: 20px;
 }
 
-/* Стили карточки с анимацией переворота */
+/* Стили карточки */
 .card {
-    width: 200px;
+    flex: 1 1 200px; /* Минимальная ширина 200px, растягивание по возможности */
+    max-width: 300px; /* Ограничение максимальной ширины */
     height: 300px;
     perspective: 1000px;
     cursor: pointer;
@@ -312,16 +313,18 @@ input[type="text"]::selection {
     font-size: 1.5em;
     font-weight: bold;
     border-radius: 10px;
+    padding: 10px;
     color: #fff;
-    transition: transform 0.6s ease; /* Плавная анимация переворота */
+    transition: transform 0.6s ease;
+    overflow-wrap: break-word; /* Перенос слов */
 }
 
 .card-front {
-    background-color: rgba(25, 47, 147, 0.5);;
+    background-color: #007BFF;
 }
 
 .card-back {
-    background-color: rgba(123, 255, 103, 0.5);
+    background-color: #28A745;
     transform: rotateY(180deg);
 }
 
