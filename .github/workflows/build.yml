@@ -5,10 +5,6 @@ on:
   push:
     branches:
       - master
-    
-    paths-ignore:
-      - .github/**
-
 
 jobs:
   build:
@@ -27,3 +23,27 @@ jobs:
       
       - name: Push image to docker.io
         run: docker push $LOGIN/$NAME:${GITHUB_REF:11}
+
+  deploy:
+    needs: build
+    name: deploy image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install sshpass
+      run: sudo apt-get update && sudo apt-get install -y sshpass
+
+    - name: Install SSH keys
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+    - name: Connect and Pull
+      env:
+        SSHPASS: ${{ secrets.SSH_PASSWORD }}
+      run: |
+        sshpass -e ssh root@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker-compose pull && docker-compose up -d --build && exit"
+
+    - name: Cleanup
+      run: rm -rf ~/.ssh
