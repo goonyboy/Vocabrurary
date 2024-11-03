@@ -44,15 +44,7 @@ jobs:
       env:
         SSHPASS: ${{ secrets.SSH_PASSWORD }}
       run: |
-        sshpass -e ssh -o StrictHostKeyChecking=no -T root@${{ secrets.SSH_HOST }} "
-        ls -la && echo 'Available directories:' && 
-        if [ -d '${{ secrets.WORK_DIR }}' ]; then 
-          echo 'WORK_DIR exists. Changing directory...'; 
-          cd ${{ secrets.WORK_DIR }} && docker-compose pull && docker-compose up -d --build; 
-        else 
-          echo 'WORK_DIR does not exist'; 
-          exit 1; 
-        fi"
+        sshpass -e ssh -o StrictHostKeyChecking=no -T root@${{ secrets.SSH_HOST }} "cd ~/${{ secrets.WORK_DIR }} && docker-compose pull && docker-compose up -d --build"
 
     - name: Cleanup
       run: rm -rf ~/.ssh
